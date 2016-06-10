@@ -83,7 +83,12 @@ class DefaultController extends Controller
     public function generateAction(Request $request)
     {
         $em = $this->get('doctrine')->getManager();
-        $userList = array('user1'=>'ROLE_USER','user2'=>'ROLE_USER','admin1'=>'ROLE_ADMIN','admin2'=>'ROLE_ADMIN','supper_admin'=>'ROLE_SUPER_ADMIN');
+        $userList = array(
+            'user1'=>array('ROLE_USER'),
+            'user2'=>array('ROLE_USER'),
+            'admin1'=>array('ROLE_USER','ROLE_ADMIN'),
+            'admin2'=>array('ROLE_USER','ROLE_ADMIN'),
+            'supper'=> array('ROLE_USER','ROLE_ADMIN','ROLE_SUPER_ADMIN'));
         $password = '12345678';
         $factory = $this->get('security.encoder_factory');
 
@@ -94,7 +99,7 @@ class DefaultController extends Controller
             $user->setFirstname('Test_'.$username);
             $user->setLastname('last_Test_'.$username);
             $user->setEmail($username.'@yahoo.com');
-            $user->setRoles(array($role));
+            $user->setRoles($role);
             $encoder = $factory->getEncoder($user);
             $encodedPassword = $encoder->encodePassword($password, $user->getSalt());
             $user->setPassword($encodedPassword);
