@@ -66,26 +66,6 @@ swiftmailer:
     spool:     { type: memory }
 
 
-fos_elastica:
-    clients:
-        default: { host: localhost, port: 9200 }
-    indexes:
-        search:
-            client: default
-            types:
-                user:
-                    mappings:
-                        firstname: ~
-                        lastname: ~
-                    persistence:
-                        driver: orm
-                        model: CustomBookBundle\Entity\User
-                        provider: ~
-                        listener:
-                            immediate: ~
-                        finder: ~
-
-
 ongr_elasticsearch:
     analysis:
         filter:

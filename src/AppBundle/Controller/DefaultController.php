@@ -82,24 +82,31 @@ class DefaultController extends Controller
      */
     public function generateAction(Request $request)
     {
-        $username = 'user5';
-        $password = '1235678';
-
         $em = $this->get('doctrine')->getManager();
+        $userList = array('user1'=>'ROLE_USER','user2'=>'ROLE_USER','admin1'=>'ROLE_ADMIN','admin2'=>'ROLE_ADMIN','supper_admin'=>'ROLE_SUPER_ADMIN');
+        $password = '12345678';
+        $factory = $this->get('security.encoder_factory');
 
-        $user = new User();
-        $user->setUsername($username);
-        $user->setFirstname('Thanh Truc');
-        $user->setLastname('Duong');
-        $user->setEmail('test5@yahoo.com');
-        $user->setRoles(array('ROLE_USER'));
+        foreach ($userList as $username => $role)
+        {
+            $user = new User();
+            $user->setUsername($username);
+            $user->setFirstname('Test_'.$username);
+            $user->setLastname('last_Test_'.$username);
+            $user->setEmail($username.'@yahoo.com');
+            $user->setRoles(array($role));
+            $encoder = $factory->getEncoder($user);
+            $encodedPassword = $encoder->encodePassword($password, $user->getSalt());
+            $user->setPassword($encodedPassword);
+            $em->persist($user);
+        }
+
+
 
         // encode the password
-        $factory = $this->get('security.encoder_factory');
-        $encoder = $factory->getEncoder($user);
-        $encodedPassword = $encoder->encodePassword($password, $user->getSalt());
-        $user->setPassword($encodedPassword);
-        $em->persist($user);
+
+
+
         $em->flush();
 
         die('finish');
@@ -127,10 +134,27 @@ class DefaultController extends Controller
     public function createDocAction(Request $request)
     {
         $manager = $this->get('es.manager');
-        $content = new Content();
-        $content->id = 1; // Optional, if not set, elasticsearch will set a random.
-        $content->title = 'Acme title Sample';
-        $manager->persist($content);
+
+        $listTitle = array(
+            'Acme title Sample',
+            'Acme title Sample Test1',
+            'Acme title Sample Test2',
+            'Acme title Sample Test3',
+            'Acme title Sample Test4',
+            'Acme title Sample Test5',
+            'Acme title Sample Test6'
+        );
+
+        $i=1;
+        foreach ($listTitle as $title)
+        {
+            $content = new Content();
+            $content->id = $i;
+            $content->title = $title;
+            $manager->persist($content);
+            $i++;
+        }
+
         $manager->commit();
 
         die('created doc');
@@ -145,7 +169,6 @@ class DefaultController extends Controller
     {
 
         $manager = $this->get('es.manager');
-        $manager = $this->get('es.manager');
         $content = $manager->find('AppBundle:Content', 5);
         $content->title = 'changed Acme title';
         $manager->persist($content);
@@ -158,84 +181,22 @@ class DefaultController extends Controller
 
 
     /**
-     * @Route("/find_doc", name="find_doc")
+     * @Route("/find_doc/{word}", name="find_doc")
      */
-    public function findDocAction(Request $request)
+    public function findDocAction(Request $request, $word = NULL)
     {
-//        $repo = $this->get('es.manager.default.content');
-//
-//        /** @var $content Content **/
-//        $content = $repo->findBy(['title' => 'Acme']); // 5 is the document _uid in the elasticsearch.
-//        var_dump($content);
-
-
-//        $repo = $this->get('es.manager.default.content');
-//        $search = $repo->createSearch();
-//        $termQuery = new MatchAllQuery();
-//        $results = $repo->execute($search, Result::RESULTS_OBJECT); // Result::RESULTS_OBJECT is the default value
-//        echo $results->count() . "<br/>";
-//
-//        /** @var AppBundle:Content $document */
-//        foreach ($results as $document) {
-//            echo $document->title, $results->getDocumentSort();
-//        }
-
-
-        // search
-
-//        $repo = $this->get('es.manager.default.city');
-//        $search = $repo->createSearch();
-//
-//        $termQuery = new TermQuery('country', 'Lithuania');
-//        $search->addQuery($termQuery);
-//
-//        $rangeQuery = new RangeQuery('population', ['from' => 10000]);
-//        $search->addQuery($rangeQuery);
-//
-//        $results = $repo->execute($search);
-//
-//        var_dump($results);
-//
-//
-
-
-
-
-//
-//        $repo = $this->get('es.manager.default.content');
-//        $search = $repo->createSearch();
-//        $termQuery = new MatchAllQuery();
-//        $search->addQuery($termQuery);
-//
-//        $results = $repo->execute($search, Result::RESULTS_OBJECT); // Result::RESULTS_OBJECT is the default value
-//        echo $results->count() . "<br/>";
-//
-//        /** @var AppBundle:Content $document */
-//        foreach ($results as $document) {
-//            echo $document->title, $results->getDocumentSort() ." <br/>";
-//        }
-
-
         $manager = $this->get("es.manager");
         $repository = $manager->getRepository('AppBundle:Content');
 
         $search = $repository->createSearch();
-
-        $queryStringQuery = new QueryStringQuery("*my5", ["default_field"=>"title"]);
+        $queryStringQuery = new QueryStringQuery("*".$word."*", ["default_field"=>"title"]);
         $search->addQuery($queryStringQuery);
-
-
-//        $rangeFilter = new RangeFilter('id', ['from' => 5, 'to' => 20]);
-//        $search->addFilter($rangeFilter);
 
         $results = $repository->execute($search, Result::RESULTS_OBJECT);
 
         foreach ($results as $document) {
             echo $document->title, $results->getDocumentSort() ." <br/>";
         }
-
-        var_dump($results);
-
         die();
     }
 

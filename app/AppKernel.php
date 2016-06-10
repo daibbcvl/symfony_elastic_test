@@ -17,7 +17,6 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new AppBundle\AppBundle(),
             new CustomBookBundle\CustomBookBundle(),
-            new FOS\ElasticaBundle\FOSElasticaBundle(),
             new ONGR\ElasticsearchBundle\ONGRElasticsearchBundle(),
         );
 
