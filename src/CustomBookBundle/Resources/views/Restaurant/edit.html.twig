@@ -1,0 +1,29 @@
+{{ form_start(form) }}
+<dl>
+    <dt>{{ form_label(form.name) }}</dt>
+    <dd>
+        {{ form_widget(form.name) }}
+        {{ form_errors(form.name) }}
+    </dd>
+
+    <dt>{{ form_label(form.lat) }}</dt>
+    <dd>
+        {{ form_widget(form.lat) }}
+        {{ form_errors(form.lat) }}
+    </dd>
+
+    <dt>{{ form_label(form.lon) }}</dt>
+    <dd>
+        {{ form_widget(form.lon) }}
+        {{ form_errors(form.lon) }}
+    </dd>
+
+
+    <dt>{{ form_label(form.address) }}</dt>
+    <dd>
+        {{ form_widget(form.address) }}
+        {{ form_errors(form.address) }}
+    </dd>
+</dl>
+
+{{ form_end(form) }}

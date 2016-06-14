@@ -1,17 +1,17 @@
 <?php
 // src/AppBundle/Document/ContentMetaObject.php
 
-namespace AppBundle\Document;
+namespace CustomBookBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
 
 /**
  * @ES\Object
  */
-class ContentMetaObject
+class LocationMetaObject
 {
     /**
-     * @ES\Property(type="string")
+     * @ES\Property(type="float")
      */
     public $lat;
 

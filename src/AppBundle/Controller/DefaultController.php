@@ -2,9 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Document\ContentMetaObject;
+use AppBundle\Document\LocationMetaObject;
 use CustomBookBundle\CustomBookBundle;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Elastica\Query\QueryString;
@@ -17,9 +21,17 @@ use ONGR\ElasticsearchDSL\Query\TermsQuery;
 use ONGR\ElasticsearchDSL\Query\RangeQuery;
 
 
+use CustomBookBundle\Entity\Restaurant;
+use CustomBookBundle\Form\RestaurantType;
+
+
+
+
 
 use CustomBookBundle\Entity\User;
 use AppBundle\Document\Content;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Constraints\Null;
 
 class DefaultController extends Controller
 {
@@ -168,6 +180,50 @@ class DefaultController extends Controller
 
 
     /**
+     * @Route("/doc_form", name="doc_form")
+     */
+    public function createDocFormAction(Request $request)
+    {
+        // create a task and give it some dummy data for this example
+        $restaurant = new Restaurant();
+
+        $form = $this->createForm(new RestaurantType(), $restaurant);
+
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $manager = $this->get('es.manager');
+
+            $rt = new \CustomBookBundle\Document\Restaurant();
+            $rt->address = $restaurant->getAddress();
+            $rt->name = $restaurant->getName();
+            $content = new \CustomBookBundle\Document\LocationMetaObject();
+            $content->lat = $restaurant->getLat();
+            $content->lon= $restaurant->getLon();
+            $rt->location[] = $content;
+
+
+
+
+
+
+            $manager->persist($rt);
+
+            $manager->commit();
+
+            die('success');
+            
+        }
+        return $this->render('CustomBookBundle:Restaurant:index.html.twig', array(
+            'form' => $form->createView(),
+        ));
+
+    }
+
+
+        /**
      * @Route("/update_doc", name="update_doc")
      */
     public function updateDocAction(Request $request)
@@ -204,5 +260,152 @@ class DefaultController extends Controller
         }
         die();
     }
+
+
+    /**
+     * @Route("/find_restaurant/{word}", name="find_res")
+     */
+    public function findRestaurantAction(Request $request, $word = NULL)
+    {
+        $manager = $this->get("es.manager.restaurant");
+        $repository = $manager->getRepository('CustomBookBundle:Restaurant');
+
+        $search = $repository->createSearch();
+        $queryStringQuery = new QueryStringQuery("*".$word."*", ["default_field"=>"address"]);
+        $search->addQuery($queryStringQuery);
+
+//        $rangeQuery = new RangeQuery('location.lat', ['from' => 0.9]);
+//        $search->addQuery($rangeQuery);
+//        $rangeQuery = new RangeQuery('location.lon', ['to' => 0]);
+//        $search->addQuery($rangeQuery);
+
+
+//        $termQuery = new TermQuery('name', 'Caraven');
+//        $search->addQuery($termQuery);
+
+        $results = $repository->execute($search, Result::RESULTS_ARRAY);
+
+        var_dump($results);
+
+        foreach ($results as $document) {
+            var_dump($document['name']. ", Lat: ". $document['location'][0]['lat']  .", Long: ". $document['location'][0]['lon'] );
+            //echo $document->title, $results->getDocumentSort() ." <br/>";
+        }
+        die();
+    }
+
+
+
+    /**
+     * @Route("/restaurant/add", name="rs_add")
+     */
+    public function addRestaurantAction(Request $request, $word = NULL)
+    {
+        // create a task and give it some dummy data for this example
+        $restaurant = new \CustomBookBundle\Entity\Restaurant();
+
+        $form = $this->createForm(new \CustomBookBundle\Form\RestaurantType(), $restaurant);
+
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $manager = $this->get('es.manager.restaurant');
+
+            $rt = new \CustomBookBundle\Document\Restaurant();
+            $rt->address = $restaurant->getAddress();
+            $rt->name = $restaurant->getName();
+            $content = new \CustomBookBundle\Document\LocationMetaObject();
+            $content->lat = $restaurant->getLat();
+            $content->lon= $restaurant->getLon();
+            $rt->location[] = $content;
+
+
+
+
+
+
+            $manager->persist($rt);
+
+            $manager->commit();
+
+            die('success');
+
+        }
+        return $this->render('CustomBookBundle:Restaurant:index.html.twig', array(
+            'form' => $form->createView(),
+        ));
+
+    }
+
+
+    /**
+     * @Route("/restaurant/edit/{id}", name="rs_edit")
+     */
+    public function editRestaurantAction(Request $request, $id = NULL)
+    {
+        // create a task and give it some dummy data for this example
+
+        if($id == Null){
+            throw new \Exception('Something went wrong!');
+        }
+        $manager = $this->get("es.manager.restaurant");
+        $repository = $manager->getRepository('CustomBookBundle:Restaurant');
+
+        $search = $repository->createSearch();
+
+        $restaurantObject = $repository->find($id);//,['name'=>'Quan 3 con cuu 1']);
+
+
+
+
+        $restaurant = new \CustomBookBundle\Entity\Restaurant();
+
+        //var_dump($a=$restaurantObject->location[0]->lat); die;
+
+        $restaurant->setAddress($restaurantObject->address);
+        $restaurant->setName($restaurantObject->name);
+        $restaurant->setLat($restaurantObject->location[0]->lat);
+        $restaurant->setLon($restaurantObject->location[0]->lon);
+
+        $form = $this->createForm(new \CustomBookBundle\Form\RestaurantType(), $restaurant);
+
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+
+
+            $rt = new \CustomBookBundle\Document\Restaurant();
+            $rt->address = $restaurant->getAddress();
+            $rt->name = $restaurant->getName();
+            $content = new \CustomBookBundle\Document\LocationMetaObject();
+            $content->lat = $restaurant->getLat();
+            $content->lon= $restaurant->getLon();
+            $rt->location[] = $content;
+            $rt->location[] = $content;
+
+
+
+
+
+
+            $manager->persist($rt);
+
+            $manager->commit();
+
+            die('success');
+
+        }
+        return $this->render('CustomBookBundle:Restaurant:edit.html.twig', array(
+            'form' => $form->createView(),
+        ));
+
+    }
+
+
+
 
 }

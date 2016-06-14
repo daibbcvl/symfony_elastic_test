@@ -84,6 +84,10 @@ ongr_elasticsearch:
                 filter:
                     - lowercase
                     - incremental_filter
+                    - asciifolding
+                    - word_delimiter
+                    - snowball
+
     connections:
         default:
             index_name: acme_index
@@ -92,10 +96,24 @@ ongr_elasticsearch:
                     - incrementalAnalyzer
                 filter:
                     - incremental_filter
+        restaurant:
+            index_name: business
+            analysis:
+                analyzer:
+                    - incrementalAnalyzer
+                filter:
+                    - incremental_filter
+
     managers:
         default:
             connection: default
             mappings:
                 - AppBundle
-                - CustomBookBundle
-            force_commit: false
+            force_commit: true
+
+        restaurant:
+            connection: restaurant
+            mappings:
+                  - AppBundle
+                  - CustomBookBundle
+            force_commit: true
