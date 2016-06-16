@@ -1,3 +1,27 @@
+category:
+    path:     /category
+    defaults: { _controller: CustomBookBundle:Category:index }
+
+category_add:
+    path:     /category/add
+    defaults: { _controller: CustomBookBundle:Category:add }
+
+
+product_list:
+    path:     /product/{page}
+    defaults: { _controller: CustomBookBundle:Product:index, page: 1 }
+    requirements:
+            page:  \d+
+
+
+
+product_add:
+    path:     /product/add
+    defaults: { _controller: CustomBookBundle:Product:add }
+
+
+
+
 custom_book_homepage:
     path:     /hello
     defaults: { _controller: CustomBookBundle:Default:index }

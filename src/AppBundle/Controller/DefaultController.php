@@ -8,7 +8,7 @@ use CustomBookBundle\CustomBookBundle;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\ExtensionCore\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Elastica\Query\QueryString;
@@ -313,20 +313,20 @@ class DefaultController extends Controller
 
             $manager = $this->get('es.manager.restaurant');
 
-            $rt = new \CustomBookBundle\Document\Restaurant();
-            $rt->address = $restaurant->getAddress();
-            $rt->name = $restaurant->getName();
-            $content = new \CustomBookBundle\Document\LocationMetaObject();
-            $content->lat = $restaurant->getLat();
-            $content->lon= $restaurant->getLon();
-            $rt->location[] = $content;
+//            $rt = new \CustomBookBundle\Document\Restaurant();
+//            $rt->address = $restaurant->getAddress();
+//            $rt->name = $restaurant->getName();
+//            $content = new \CustomBookBundle\Document\LocationMetaObject();
+//            $content->lat = $restaurant->getLat();
+//            $content->lon= $restaurant->getLon();
+//            $rt->location[] = $content;
 
 
 
 
 
 
-            $manager->persist($rt);
+            $manager->persist($restaurant);
 
             $manager->commit();
 

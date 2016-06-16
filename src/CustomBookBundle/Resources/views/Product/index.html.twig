@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    {{ form_end(form) }}
+
+    <ul>
+        {% for entity in feeds %}
+            <li>{{ entity.getProductName()}}</li>
+        {% endfor %}
+    </ul>
+
+
+    {% if lastPage > 1 %}
+        <div class="pagination">
+
+            <a href="{{ url('product_list', {'slug': 'product_list', 'page': 1 }) }}  ">
+                <img src="{{ asset('bundles/framework/images/first.png') }}" alt="First page" title="First page" />
+            </a>
+
+            <a href="{{ url('product_list', { 'slug':'product_list', 'page': previousPage }) }}">
+                <img src="{{ asset('bundles/framework/images/previous.png') }}" alt="Previous page" title="Previous page" />
+            </a>
+
+            {% for page in 1..lastPage %}
+                {% if page == currentPage %}
+                    {{ page }}
+                {% else %}
+                    <a href="{{ url('product_list', { 'slug':'product_list' , 'page': page }) }}">{{ page }}</a>
+                {% endif %}
+            {% endfor %}
+
+            <a href="{{ url('product_list', { 'slug': 'product_list', 'page': nextPage }) }}">
+                <img src="{{ asset('bundles/framework/images/next.png') }}" alt="Next page" title="Next page" />
+            </a>
+
+            <a href="{{ url('product_list', { 'slug': 'product_list', 'page': lastPage }) }}">
+                <img src="{{ asset('bundles/framework/images/last.png') }}" alt="Last page" title="Last page" />
+            </a>
+        </div>
+    {% endif %}
+    <div class="pagination_desc">
+        <strong></strong> feeds in this category
+
+        {% if lastPage > 1 %}
+            - page <strong>{{ currentPage }}/{{ lastPage }}</strong>
+        {% endif %}
+    </div>
+
+{% endblock %}
+

@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use CustomBookBundle\Form;
 
 class RestaurantType extends AbstractType
 {
@@ -21,8 +22,7 @@ public function buildForm(FormBuilderInterface $builder, array $options)
 {
     $builder
         ->add('name', TextType::class, array('label'=>'Restaurant name'))
-        ->add('lat', NumberType::class, array('label'=>'Latitude'))
-        ->add('lon', NumberType::class, array('label'=>'Longitude'))
+        ->add('location', LocationType::class)
         ->add('address', TextareaType::class, array('label'=>'Restaurant Address'))
         ->add('save', SubmitType::class, array('label' => 'Save'));
 }

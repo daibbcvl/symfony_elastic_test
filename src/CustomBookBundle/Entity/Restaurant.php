@@ -17,15 +17,12 @@ class Restaurant
      */
     private $name;
 
-    /**
-     * @Assert\Regex(pattern="/\d+/", message="Please input a valid number")
-     */
-    private $lat;
 
-    /**
-     * @Assert\NotBlank()
-     */
-    private $lon;
+//    /**
+//     * @ORM\OneToOne(targetEntity="Location", inversedBy="restaurant")
+//     * @ORM\JoinColumn(name="location_id", referencedColumnName="id")
+//     */
+//    protected $location;
 
     /**
      * @Assert\NotBlank()
@@ -41,22 +38,6 @@ class Restaurant
         return $this->name;
     }
 
-    public function setLat($lat){
-        $this->lat = $lat;
-    }
-
-    public function getLat(){
-        return $this->lat;
-    }
-
-
-    public function setLon($lon){
-        $this->lon = $lon;
-    }
-
-    public function getLon(){
-        return $this->lon;
-    }
 
     public function setAddress($address){
        $this->address = $address;

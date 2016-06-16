@@ -1,0 +1,40 @@
+<?php
+
+namespace CustomBookBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Index;
+use Doctrine\Common\Collections\ArrayCollection;
+
+/**
+ * Tag
+ *
+ * @ORM\Table(name="tag")
+ * @ORM\Entity(repositoryClass="CustomBookBundle\Repository\TagRepository")
+ * @ORM\HasLifecycleCallbacks()
+ */
+class Tag
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="tag_name", type="string", length=50)
+     */
+    private $tag_name;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Product", mappedBy="tags", cascade={"persist","remove"})
+     */
+    private $products;
+
+}

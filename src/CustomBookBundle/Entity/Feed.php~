@@ -1,0 +1,213 @@
+<?php
+
+namespace CustomBookBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Index;
+use Doctrine\Common\Collections\ArrayCollection;
+
+
+/**
+ * Feed
+ *
+ * @ORM\Table(name="feeds", indexes={@Index(name="CATEGORY", columns={"category"})})
+ * @ORM\Entity(repositoryClass="CustombookBundle\Repository\FeedRepository")
+ * @ORM\HasLifecycleCallbacks()
+ */
+class Feed
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="url", type="string", length=255, nullable=true)
+     */
+    private $url;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=45, nullable=true)
+     */
+    private $title;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="last_update", type="datetime", nullable=true)
+     */
+    private $last_update;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="category", type="string", length=255, nullable=true)
+     */
+    private $category;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="FeedItem", mappedBy="feed")
+     */
+    private $feedItems;
+
+    public function __construct()
+    {
+        $this->last_update = new \DateTime();
+        $this->feedItems = new ArrayCollection();
+    }
+
+    
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     *
+     * @return Feed
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     *
+     * @return Feed
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Set lastUpdate
+     *
+     * @param \DateTime $lastUpdate
+     *
+     * @return Feed
+     */
+    public function setLastUpdate($lastUpdate)
+    {
+        $this->last_update = $lastUpdate;
+
+        return $this;
+    }
+
+    /**
+     * Get lastUpdate
+     *
+     * @return \DateTime
+     */
+    public function getLastUpdate()
+    {
+        return $this->last_update;
+    }
+
+    /**
+     * Set category
+     *
+     * @param string $category
+     *
+     * @return Feed
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category
+     *
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * Add feedItem
+     *
+     * @param \CustomBookBundle\Entity\FeedItem $feedItem
+     *
+     * @return Feed
+     */
+    public function addFeedItem(\CustomBookBundle\Entity\FeedItem $feedItem)
+    {
+        $this->feedItems[] = $feedItem;
+
+        return $this;
+    }
+
+    /**
+     * Remove feedItem
+     *
+     * @param \CustomBookBundle\Entity\FeedItem $feedItem
+     */
+    public function removeFeedItem(\CustomBookBundle\Entity\FeedItem $feedItem)
+    {
+        $this->feedItems->removeElement($feedItem);
+    }
+
+    /**
+     * Get feedItems
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFeedItems()
+    {
+        return $this->feedItems;
+    }
+}
