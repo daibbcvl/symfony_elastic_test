@@ -20,11 +20,25 @@ product_add:
     defaults: { _controller: CustomBookBundle:Product:add }
 
 
+product_sample:
+    path:     /product/sample
+    defaults: { _controller: CustomBookBundle:Product:sample }
+
+product_test:
+    path:     /product/test
+    defaults: { _controller: CustomBookBundle:Product:test }
+
 
 
 custom_book_homepage:
     path:     /hello
     defaults: { _controller: CustomBookBundle:Default:index }
+
+
+test_service:
+    path:     /test_service/{name}
+    defaults: { _controller: CustomBookBundle:Default:service }
+
 
 
 login:

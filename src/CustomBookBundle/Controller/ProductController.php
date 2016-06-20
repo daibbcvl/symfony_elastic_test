@@ -22,6 +22,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Form\FormFactoryInterface;
+
 
 
 class ProductController extends Controller
@@ -44,11 +46,14 @@ class ProductController extends Controller
                 ->find($ssProductCategory);
             $product->setCategory($category);
         }
-
-
-        //var_dump($category);
+        
+        $url = $this->generateUrl(
+            'product_list',
+            array('slug' => 'product_list')
+        );
 
         $form = $this->createFormBuilder($product)
+            ->setAction($url)
             ->add('category',
                 'entity',
                 array(
@@ -103,23 +108,22 @@ class ProductController extends Controller
         $em = $this->getDoctrine()->getManager();
         $product = new Product();
 
-//        $tag  = $this->getDoctrine()
-//            ->getRepository('CustomBookBundle:Tag')
-//            ->find(1);
-//
-//        $product->addTag($tag);
-//
-//        $tag  = $this->getDoctrine()
-//            ->getRepository('CustomBookBundle:Tag')
-//            ->find(2);
-//
-//        $product->addTag($tag);
+        $tag  = $this->getDoctrine()
+            ->getRepository('CustomBookBundle:Tag')
+            ->find(1);
+
+        $product->addTag($tag);
+
+        $tag  = $this->getDoctrine()
+            ->getRepository('CustomBookBundle:Tag')
+            ->find(2);
+
+        $product->addTag($tag);
 
         $form = $this->createForm(new ProductType(), $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $em->persist($product);
             $em->flush();
             $this->redirect('index');
@@ -128,5 +132,28 @@ class ProductController extends Controller
             'form' => $form->createView(),
         ));
 
+    }
+    public function sampleAction(Request $request)
+    {
+        return $this->render('CustomBookBundle:Product:sample.html.twig');
+    }
+
+    public function testAction(Request $request)
+    {
+        $form = $this->createForm(new ProductType);
+        return $this->render('CustomBookBundle:Category:add.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
+
+    public function doSomething()
+    {
+
+
+//        $tag  = $this->getDoctrine()
+//            ->getRepository('CustomBookBundle:Tag')
+//            ->findBy('tag_name','tag1');
+//
+//        return $tag[0]->id;
     }
 }

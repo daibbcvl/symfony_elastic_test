@@ -3,7 +3,9 @@
 {% block body %}
 
     {{ form_start(form) }}
-    {{ form_widget(form) }}
+    <dl>
+        <dd>{{ form_row(form.category) }}</dd><dd>{{ form_row(form.search) }}</dd>
+    </dl>
 
     {{ form_end(form) }}
 

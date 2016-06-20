@@ -31,7 +31,6 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
                 ->addSelect('c')
                 ->getQuery();
         }
-       // echo $query->getSQLQuery();
         $query->setFirstResult(($page - 1) * $itemPerPage)
             ->setMaxResults($itemPerPage);
         return $query->getResult();
